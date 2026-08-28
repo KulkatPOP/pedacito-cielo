@@ -1,0 +1,5 @@
+.identity-public-gallery{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;padding-top:28px;padding-bottom:28px}
+.identity-public-gallery img{width:100%;height:170px;object-fit:cover;border-radius:3px;transition:transform .3s,filter .3s}
+.identity-public-gallery img:nth-child(2n){margin-top:18px}.identity-public-gallery img:hover{transform:translateY(-4px);filter:saturate(1.08)}
+@media(max-width:900px){.identity-public-gallery{grid-template-columns:repeat(3,1fr)}.identity-public-gallery img{height:190px}}
+@media(max-width:600px){.identity-public-gallery{display:flex;overflow:auto;scroll-snap-type:x mandatory}.identity-public-gallery img{min-width:78%;height:280px;scroll-snap-align:center;margin-top:0!important}}

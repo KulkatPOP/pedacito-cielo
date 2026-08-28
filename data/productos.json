@@ -1,0 +1,11 @@
+[
+{"id":1,"nombre":"Marraqueta crujiente","categoria":"Panadería","precio":"$2.200 / kg","imagen":"/images/productos/marraqueta.jpg","descripcion":"Corteza dorada y miga liviana, horneada durante toda la mañana.","disponible":true,"destacado":true},
+{"id":2,"nombre":"Croissant de mantequilla","categoria":"Desayunos","precio":"$2.490","imagen":"/images/productos/croissant.jpg","descripcion":"Hojaldrado a mano, dorado y delicadamente crujiente.","disponible":true,"destacado":true},
+{"id":3,"nombre":"Torta chocolate cielo","categoria":"Tortas","precio":"Desde $26.900","imagen":"/images/productos/torta-chocolate.jpg","descripcion":"Bizcocho húmedo, ganache de chocolate y terminación artesanal.","disponible":true,"destacado":true},
+{"id":4,"nombre":"Cheesecake frutos rojos","categoria":"Pastelería","precio":"$3.990","imagen":"/images/productos/cheesecake.jpg","descripcion":"Cremoso, equilibrado y cubierto con frutos rojos.","disponible":true},
+{"id":5,"nombre":"Arepa venezolana · Reina pepiada","categoria":"🇻🇪 Productos venezolanos","precio":"$6.490","imagen":"/images/productos/venezolanos/arepa.jpg","descripcion":"Tradicional arepa de maíz, recién hecha y rellena con pollo, palta y nuestra sazón de casa.","disponible":true,"destacado":true},
+{"id":6,"nombre":"Desayuno del cielo","categoria":"Desayunos","precio":"$7.990","imagen":"/images/productos/desayuno.jpg","descripcion":"Café, jugo, croissant y tostadas para comenzar bien el día.","disponible":true},
+{"id":7,"nombre":"Torta personalizada","categoria":"Productos especiales","precio":"A cotizar","imagen":"/images/productos/torta-personalizada.jpg","descripcion":"Diseñada para tu celebración, con sabores y terminaciones a elección.","disponible":true},
+{"id":8,"nombre":"Empolvado artesanal","categoria":"Pastelería","precio":"$1.890","imagen":"/images/productos/empolvado.jpg","descripcion":"Suave bizcocho relleno con abundante manjar.","disponible":false}
+]
+
