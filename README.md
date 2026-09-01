@@ -22,3 +22,13 @@ Antes de usarlo con clientes, reemplaza el WhatsApp provisional y los enlaces `#
 ## Panel administrador y Supabase
 
 El sitio ahora incluye un CMS en `/admin/login`. Sigue `supabase/README.md` para crear las tablas, Storage y el primer usuario administrador. Mientras Supabase no esté configurado, la web pública continúa funcionando con los JSON locales como respaldo.
+
+## Documentación técnica
+
+- Arquitectura: `docs/architecture.md`
+- Tecnologías: `docs/technology.md`
+- Seguridad: `docs/security.md`
+- Pruebas: `docs/testing.md`
+- Trazabilidad: `docs/traceability.md`
+- Decisiones: `docs/decisions.md`
+- Información legal pendiente: `docs/legal/legal-information-needed.md`
