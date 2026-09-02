@@ -123,7 +123,7 @@ select
   'Un pedacito de Venezuela en cada bocado',
   'Un pedacito de Venezuela', 'en cada bocado.',
   'Quillota 849, Viña del Mar', '56900000000',
-  'Lunes a sábado · 09:00 — 20:00', 'Domingo · 09:00 — 15:00',
+  'Lunes - Sábado: 09:00 AM a 06:00 PM', 'Domingos y feriados: 09:00 AM a 03:00 PM',
   '#173a5e', '#c94a3a', '#fff8e8', '#e7b83f',
   'Cielito', '¡Hola! Soy Cielito. Puedo ayudarte a conocer nuestros sabores venezolanos.'
 where not exists (select 1 from public.configuracion where id = 1);

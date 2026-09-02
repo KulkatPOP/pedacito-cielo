@@ -7,6 +7,11 @@ import localResponses from '../chatbot/responses.json';
 import localContent from '../../data/contenido.json';
 
 const fallback = { productos: localProducts, negocio: localBusiness, contenido: localContent, responses: localResponses, promociones: [] };
+const currentSchedule = localBusiness.horarios;
+const normalizeSchedule = (value, fallbackValue) => {
+  if (!value || /(?:20:00|09:00\s*[—-]\s*20:00)/.test(value) || /(?:Domingo\s*·?\s*09:00\s*[—-]\s*15:00)/i.test(value)) return fallbackValue;
+  return value;
+};
 const normalize = (product) => {
   const isArepa = product.nombre?.toLowerCase().includes('arepa');
   return {
@@ -45,8 +50,15 @@ export default function useSiteData() {
         if (hasError) throw new Error('La información remota no está disponible.');
         const business = config.data ? {
           ...localBusiness, ...config.data,
-          horarios: { semana: config.data.horario_semana || localBusiness.horarios.semana, domingo: config.data.horario_domingo || localBusiness.horarios.domingo },
-          redes: { instagram: config.data.instagram || '', facebook: config.data.facebook || '', tiktok: config.data.tiktok || '' },
+          horarios: {
+            semana: normalizeSchedule(config.data.horario_semana, currentSchedule.semana),
+            domingo: normalizeSchedule(config.data.horario_domingo, currentSchedule.domingo),
+          },
+          redes: {
+            instagram: config.data.instagram && config.data.instagram !== '#' ? config.data.instagram : localBusiness.redes.instagram,
+            facebook: config.data.facebook && config.data.facebook !== '#' ? config.data.facebook : localBusiness.redes.facebook,
+            tiktok: config.data.tiktok || '',
+          },
         } : localBusiness;
 
         if (active) setData({
@@ -56,7 +68,11 @@ export default function useSiteData() {
           promociones: promotions.data || [],
           responses: {
             ...Object.fromEntries(Object.entries(localResponses).map(([key, value]) => [key.trim().toLowerCase(), value])),
-            ...Object.fromEntries((answers.data || []).map((item) => [item.clave.trim().toLowerCase(), item.respuesta])),
+            ...Object.fromEntries((answers.data || []).map((item) => {
+              const key = item.clave.trim().toLowerCase();
+              const value = key === 'horarios' && /(?:20:00|15:00)/.test(item.respuesta) ? localResponses.horarios : item.respuesta;
+              return [key, value];
+            })),
           },
           loading: false, source: 'supabase',
         });
