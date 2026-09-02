@@ -55,8 +55,8 @@ export default function useSiteData() {
             domingo: normalizeSchedule(config.data.horario_domingo, currentSchedule.domingo),
           },
           redes: {
-            instagram: config.data.instagram && config.data.instagram !== '#' ? config.data.instagram : localBusiness.redes.instagram,
-            facebook: config.data.facebook && config.data.facebook !== '#' ? config.data.facebook : localBusiness.redes.facebook,
+            instagram: localBusiness.redes.instagram,
+            facebook: localBusiness.redes.facebook,
             tiktok: config.data.tiktok || '',
           },
         } : localBusiness;
