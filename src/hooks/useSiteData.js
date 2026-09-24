@@ -50,6 +50,7 @@ export default function useSiteData() {
         if (hasError) throw new Error('La información remota no está disponible.');
         const business = config.data ? {
           ...localBusiness, ...config.data,
+          whatsapp: localBusiness.whatsapp,
           horarios: {
             semana: normalizeSchedule(config.data.horario_semana, currentSchedule.semana),
             domingo: normalizeSchedule(config.data.horario_domingo, currentSchedule.domingo),
