@@ -1,27 +1,27 @@
 import { requireSupabase, supabase } from './supabase.js';
-import localContent from '../../data/contenido.json';
+import { businessConfig, contentConfig } from '../config/siteConfig.js';
 import { mergeSources } from '../utils/dataPriority.js';
 
 export const defaultSettings = {
   id: 1,
-  nombre: 'Pedacito de Cielo',
-  descripcion: 'Panadería venezolana artesanal con sabores que reúnen a la familia.',
-  propuesta_nombre: 'Sabores venezolanos hechos con cariño',
-  frase_marca: 'Un pedacito de Venezuela',
-  slogan: 'Un pedacito de Venezuela en cada bocado',
-  descripcion_cultural: 'Compartimos recetas tradicionales venezolanas, sabores familiares y preparaciones hechas con dedicación.',
-  mensaje_bienvenida: 'Ven a disfrutar preparaciones frescas, tradición venezolana y la calidez de nuestra mesa.',
-  hero_titulo: 'Un pedacito de Venezuela', hero_destacado: 'en cada bocado.',
-  historia: '', historia_venezolana: '', categorias_destacadas: 'Arepas,Tequeños,Cachapas,Empanadas venezolanas,Pan de jamón,Golfeados',
-  logo: '', imagen_portada: '/images/productos/venezolanos/arepa.jpg', whatsapp: '', telefono: '',
-  direccion: '', horario_semana: '', horario_domingo: '',
-  instagram: '', facebook: '', tiktok: '',
-  color_principal: '#173a5e', color_secundario: '#c94a3a',
-  color_fondo: '#fff8e8', color_destacado: '#e7b83f',
+  nombre: businessConfig.nombre,
+  descripcion: businessConfig.descripcion,
+  propuesta_nombre: businessConfig.propuesta_nombre,
+  frase_marca: businessConfig.frase_marca,
+  slogan: businessConfig.slogan || `${businessConfig.hero_titulo} ${businessConfig.hero_destacado}`,
+  descripcion_cultural: businessConfig.descripcion_cultural,
+  mensaje_bienvenida: businessConfig.mensaje_bienvenida,
+  hero_titulo: businessConfig.hero_titulo, hero_destacado: businessConfig.hero_destacado,
+  historia: businessConfig.historia || '', historia_venezolana: businessConfig.historia_venezolana || '', categorias_destacadas: businessConfig.categorias_destacadas,
+  logo: businessConfig.logo || '', imagen_portada: businessConfig.imagen_portada, whatsapp: businessConfig.whatsapp, telefono: businessConfig.telefono,
+  direccion: businessConfig.direccion, horario_semana: businessConfig.horarios.semana, horario_domingo: businessConfig.horarios.domingo,
+  instagram: businessConfig.redes.instagram, facebook: businessConfig.redes.facebook, tiktok: businessConfig.redes.tiktok || '',
+  color_principal: businessConfig.color_principal, color_secundario: businessConfig.color_secundario,
+  color_fondo: businessConfig.color_fondo, color_destacado: businessConfig.color_destacado,
   galeria_productos: '[]', galeria_local: '[]', galeria_promociones: '[]',
-  contenido_pagina: localContent,
-  chatbot_nombre: 'Cielito',
-  chatbot_mensaje: '¡Hola! Soy Cielito ☁️ Puedo ayudarte a conocer nuestros sabores venezolanos, productos disponibles y realizar tu pedido.',
+  contenido_pagina: contentConfig,
+  chatbot_nombre: businessConfig.chatbot_nombre,
+  chatbot_mensaje: businessConfig.chatbot_mensaje,
 };
 
 export async function getBusinessSettings() {
@@ -35,7 +35,7 @@ export async function getBusinessSettings() {
       hero_titulo: legacyHero ? defaultSettings.hero_titulo : result.data.hero_titulo || defaultSettings.hero_titulo,
       hero_destacado: legacyHero ? defaultSettings.hero_destacado : result.data.hero_destacado || defaultSettings.hero_destacado,
       imagen_portada: result.data.imagen_portada || result.data.hero_imagen || defaultSettings.imagen_portada,
-      contenido_pagina: mergeSources({ remote: result.data.contenido_pagina, fallback: localContent }),
+      contenido_pagina: mergeSources({ remote: result.data.contenido_pagina, fallback: contentConfig }),
     } : null,
     source: 'configuracion',
     error: null,

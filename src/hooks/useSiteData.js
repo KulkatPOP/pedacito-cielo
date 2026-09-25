@@ -2,12 +2,10 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../services/supabase.js';
 import { getBusinessSettings } from '../services/businessSettings.js';
 import localProducts from '../../data/productos.json';
-import localBusiness from '../../data/negocio.json';
-import localResponses from '../chatbot/responses.json';
-import localContent from '../../data/contenido.json';
+import { businessConfig, chatbotConfig, contentConfig } from '../config/siteConfig.js';
 import { mergeSources, prepareProducts } from '../utils/dataPriority.js';
 
-const fallback = { productos: localProducts, negocio: localBusiness, contenido: localContent, responses: localResponses, promociones: [] };
+const fallback = { productos: localProducts, negocio: businessConfig, contenido: contentConfig, responses: chatbotConfig, promociones: [] };
 const normalize = (product) => {
   const isArepa = product.nombre?.toLowerCase().includes('arepa');
   return {
@@ -47,17 +45,17 @@ export default function useSiteData() {
         if (hasError) throw new Error('La información remota no está disponible.');
         const business = config.data ? mergeSources({ remote: {
           ...config.data,
-          whatsapp: config.data.whatsapp || localBusiness.whatsapp,
+          whatsapp: config.data.whatsapp || businessConfig.whatsapp,
           horarios: {
-            semana: config.data.horario_semana || localBusiness.horarios.semana,
-            domingo: config.data.horario_domingo || localBusiness.horarios.domingo,
+            semana: config.data.horario_semana || businessConfig.horarios.semana,
+            domingo: config.data.horario_domingo || businessConfig.horarios.domingo,
           },
           redes: {
-            instagram: config.data.instagram ?? localBusiness.redes.instagram,
-            facebook: config.data.facebook ?? localBusiness.redes.facebook,
+            instagram: config.data.instagram ?? businessConfig.redes.instagram,
+            facebook: config.data.facebook ?? businessConfig.redes.facebook,
             tiktok: config.data.tiktok || '',
           },
-        }, fallback: localBusiness }) : localBusiness;
+        }, fallback: businessConfig }) : businessConfig;
 
         const normalizedProducts = Array.isArray(products.data)
           ? prepareProducts(products.data, normalize)
@@ -70,10 +68,10 @@ export default function useSiteData() {
         if (active) setData({
           productos: normalizedProducts,
           negocio: business,
-          contenido: mergeSources({ remote: config.data?.contenido_pagina, fallback: localContent }),
+          contenido: mergeSources({ remote: config.data?.contenido_pagina, fallback: contentConfig }),
           promociones: activePromotions,
           responses: {
-            ...Object.fromEntries(Object.entries(localResponses).map(([key, value]) => [key.trim().toLowerCase(), value])),
+            ...Object.fromEntries(Object.entries(chatbotConfig).map(([key, value]) => [key.trim().toLowerCase(), value])),
             ...Object.fromEntries((answers.data || []).map((item) => {
               const key = item.clave.trim().toLowerCase();
               return [key, item.respuesta];

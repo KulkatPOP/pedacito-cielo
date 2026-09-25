@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import { brandingConfig } from '../config/siteConfig.js';
 
 export default class ErrorBoundary extends Component {
   state = { failed: false };
@@ -14,7 +15,7 @@ export default class ErrorBoundary extends Component {
   render() {
     if (!this.state.failed) return this.props.children;
     return <main className="app-error" role="alert">
-      <span>Pedacito de Cielo</span>
+      <span>{brandingConfig.shortName}</span>
       <h1>No pudimos mostrar esta página</h1>
       <p>Intenta cargar nuevamente. Si el problema continúa, vuelve al inicio.</p>
       <div><button type="button" onClick={() => window.location.reload()}>Reintentar</button><a href="/">Volver al inicio</a></div>
