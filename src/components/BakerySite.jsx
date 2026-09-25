@@ -8,10 +8,11 @@ export default function BakerySite({productos=[],negocio,contenido={},responses=
  const [menu,setMenu]=useState(false),[category,setCategory]=useState('Todos'),[chat,setChat]=useState(false);
  const [answer,setAnswer]=useState(''),[answerKey,setAnswerKey]=useState('');
  const welcomeMessage=negocio.chatbot_mensaje?.trim()||`¡Hola! Soy ${negocio.chatbot_nombre||'Cielito'} ☁️, tu asistente de Pedacito de Cielo. Estoy aquí para ayudarte a descubrir nuestros sabores venezolanos.`;
- const categories=['Todos',...new Set(productos.map(p=>p.categoria))];
+ const visibleProducts=useMemo(()=>productos.filter(product=>product.estado!=='oculto'),[productos]);
+ const categories=['Todos',...new Set(visibleProducts.map(p=>p.categoria))];
  const wa=(message)=>`https://wa.me/${negocio.whatsapp}?text=${encodeURIComponent(message)}`;
- const filtered=useMemo(()=>category==='Todos'?productos:productos.filter(p=>p.categoria===category),[category,productos]);
- const featured=productos.filter(p=>p.destacado);
+ const filtered=useMemo(()=>category==='Todos'?visibleProducts:visibleProducts.filter(p=>p.categoria===category),[category,visibleProducts]);
+ const featured=visibleProducts.filter(p=>p.destacado);
  const allowedProductLabels=new Set(['Más vendido','Favorito','Recomendado','Nuevo']);
  const getProductLabels=(product)=>[...(Array.isArray(product.etiquetas)?product.etiquetas:[]),product.etiqueta].filter(label=>allowedProductLabels.has(label));
  const flavorCategories=(negocio.categorias_destacadas||'Arepas,Tequeños,Cachapas,Empanadas venezolanas,Pan de jamón,Golfeados').split(',').map(item=>item.trim()).filter(Boolean);
@@ -26,7 +27,7 @@ export default function BakerySite({productos=[],negocio,contenido={},responses=
   direccion:negocio.direccion?.trim()||'Quillota 849, Viña del Mar',
  };
  const quickQuestions=chatCopy.opciones_iniciales||chatCopy.preguntas||[];
- const availableProductNames=productos.filter(product=>product.disponible).slice(0,3).map(product=>product.nombre);
+ const availableProductNames=visibleProducts.filter(product=>product.estado==='disponible'||(!product.estado&&product.disponible)).slice(0,3).map(product=>product.nombre);
  const chooseChatOption=(question)=>{const key=String(question.key||'').trim().toLowerCase();const productAnswer=availableProductNames.length?`Para comenzar, puedes conocer ${availableProductNames.join(', ')}. Revisa el catálogo para ver todos los productos, precios y disponibilidad.`:responses.productos;setAnswerKey(key);setAnswer(key==='productos'?productAnswer:(responses[key]||'Cuéntanos qué necesitas por WhatsApp y te ayudaremos personalmente.'));};
  const mapsUrl=`https://maps.google.com/?q=${encodeURIComponent(negocio.direccion)}`;
  const chatActions={productos:[['Ver catálogo','#catalogo',true],['Consultar por WhatsApp',wa('Hola Pedacito de Cielo, quisiera conocer los productos disponibles.')]],direccion:[['Abrir en Google Maps',mapsUrl],['Consultar por WhatsApp',wa('Hola Pedacito de Cielo, necesito ayuda para llegar al local.')]],horarios:[['Hacer un pedido',wa('Hola Pedacito de Cielo, quisiera consultar disponibilidad y hacer un pedido.')]],compra:[['Hacer pedido por WhatsApp',wa('Hola Pedacito de Cielo, quisiera hacer un pedido.')]],contacto:[['Escribir por WhatsApp',wa('Hola Pedacito de Cielo, quisiera hacer una consulta.')],['Visitar Instagram',negocio.redes?.instagram]]};
@@ -52,7 +53,7 @@ export default function BakerySite({productos=[],negocio,contenido={},responses=
 
   <section className="brand-values section"><div className="container"><div className="center-head"><span className="kicker">{brandValues.kicker}</span><h2>{brandValues.titulo}</h2></div><div className="brand-values-grid">{(brandValues.items||[]).map(item=><article key={item.titulo}><span>{item.icono}</span><h3>{item.titulo}</h3><p>{item.texto}</p></article>)}</div></div></section>
 
-  <section className="featured section container"><div className="section-head"><div><span className="kicker">{featuredCopy.kicker}</span><h2>{featuredCopy.titulo}</h2></div><a href="#catalogo">{featuredCopy.enlace} →</a></div><div className="featured-grid">{featured.slice(0,3).map((p,i)=><article className={`feature-card f${i}`} key={p.id}><img src={optimizedImage(p.imagen)} alt={p.nombre} loading="lazy" decoding="async"/><div className="feature-overlay"><span>{p.categoria}</span><h3>{p.nombre}</h3><p>{p.descripcion}</p><div><b>{p.precio}</b><a href={wa(`Hola Pedacito de Cielo, quisiera consultar por ${p.nombre}.`)} target="_blank">{ui.pedir} ↗</a></div></div></article>)}</div></section>
+  {featured.length>0&&<section className="featured section container"><div className="section-head"><div><span className="kicker">{featuredCopy.kicker}</span><h2>{featuredCopy.titulo}</h2></div><a href="#catalogo">{featuredCopy.enlace} →</a></div><div className="featured-grid">{featured.slice(0,3).map((p,i)=><article className={`feature-card f${i}`} key={p.id}><img src={optimizedImage(p.imagen)} alt={p.nombre} loading="lazy" decoding="async"/><div className="feature-overlay"><span>{p.categoria}</span><h3>{p.nombre}</h3><p>{p.descripcion}</p><div><b>{p.precio}</b><a href={wa(`Hola Pedacito de Cielo, quisiera consultar por ${p.nombre}.`)} target="_blank">{ui.pedir} ↗</a></div></div></article>)}</div></section>}
 
   <section className="daily"><div className="container daily-grid"><div className="daily-photo" style={daily.imagen?{backgroundImage:`linear-gradient(90deg,transparent 75%,var(--azul)),url(${optimizedImage(daily.imagen)})`}:undefined}/><div className="daily-copy"><span className="kicker light">{daily.kicker}</span><h2>{daily.titulo}</h2><p>{daily.texto}</p><a className="btn cream" href={wa('Hola Pedacito de Cielo, quisiera conocer la recomendación venezolana de hoy.')} target="_blank">{daily.boton} ↗</a></div></div></section>
 

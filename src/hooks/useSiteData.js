@@ -16,6 +16,7 @@ const normalize = (product) => {
   const isArepa = product.nombre?.toLowerCase().includes('arepa');
   return {
     ...product,
+    estado: product.estado || (product.disponible === false ? 'agotado' : 'disponible'),
     nombre: isArepa && !product.nombre.toLowerCase().includes('venezolana') ? `Arepa venezolana · ${product.nombre.replace(/^arepa\s*/i, '')}` : product.nombre,
     descripcion: isArepa ? (product.descripcion || 'Tradicional preparación venezolana hecha con masa de maíz.') : product.descripcion,
     precio: typeof product.precio === 'number' ? `$${product.precio.toLocaleString('es-CL')}` : product.precio,
@@ -62,8 +63,21 @@ export default function useSiteData() {
           },
         } : localBusiness;
 
+        const normalizedProducts = products.data?.length
+          ? products.data.map(normalize).filter((product) => product.estado !== 'oculto').sort((a, b) => {
+              if (a.orden == null && b.orden == null) return 0;
+              if (a.orden == null) return 1;
+              if (b.orden == null) return -1;
+              return a.orden - b.orden;
+            })
+          : localProducts;
+        const today = new Date().toISOString().slice(0, 10);
+        const activePromotions = (promotions.data || []).filter((promotion) =>
+          (!promotion.fecha_inicio || promotion.fecha_inicio <= today)
+          && (!promotion.fecha_termino || promotion.fecha_termino >= today));
+
         if (active) setData({
-          productos: products.data?.length ? products.data.map(normalize) : localProducts,
+          productos: normalizedProducts,
           negocio: business,
           contenido: {
             ...localContent,
@@ -73,7 +87,7 @@ export default function useSiteData() {
               ...(config.data?.contenido_pagina?.chatbot || {}),
             },
           },
-          promociones: promotions.data || [],
+          promociones: activePromotions,
           responses: {
             ...Object.fromEntries(Object.entries(localResponses).map(([key, value]) => [key.trim().toLowerCase(), value])),
             ...Object.fromEntries((answers.data || []).map((item) => {
