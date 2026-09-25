@@ -16,9 +16,10 @@ export default function CrmPanel() {
   }, []);
   const insights = useMemo(() => ({
     products: countBy(events.filter(event => event.name === MEASUREMENT_EVENTS.WHATSAPP_CLICK), 'productName'),
-    questions: countBy(events.filter(event => event.name === MEASUREMENT_EVENTS.CHATBOT_QUESTION), 'questionLabel'),
+    questions: countBy(events.filter(event => event.name === MEASUREMENT_EVENTS.CHATBOT_QUESTION).map(event => ({ ...event, anonymousIntent: event.questionKey || event.questionLabel })), 'anonymousIntent'),
     catalog: events.filter(event => event.name === MEASUREMENT_EVENTS.CATALOG_CLICK).length,
     contact: events.filter(event => event.name === MEASUREMENT_EVENTS.WHATSAPP_CLICK).length,
+    purchaseIntent: events.filter(event => event.name === MEASUREMENT_EVENTS.CHATBOT_PURCHASE_INTENT).length,
   }), [events]);
   const hasInsights = insights.products.length || insights.questions.length || insights.catalog || insights.contact;
 
@@ -27,7 +28,7 @@ export default function CrmPanel() {
     {!hasInsights ? <section className="admin-card crm-empty"><span>◎</span><h3>Aún no hay suficientes señales comerciales</h3><p>Cuando existan interacciones reales con productos, catálogo o Cielito, aparecerán aquí de forma agregada.</p></section> : <div className="crm-grid">
       <Insight title="Productos con interés" description="Clics para consultar por WhatsApp" items={insights.products}/>
       <Insight title="Consultas frecuentes" description="Opciones seleccionadas en Cielito" items={insights.questions}/>
-      <section className="admin-card crm-summary"><div className="card-title"><div><h2>Intereses generales</h2><p>Señales agregadas, sin perfiles individuales.</p></div></div><div><span><b>{insights.catalog}</b> accesos al catálogo</span><span><b>{insights.contact}</b> intenciones de contacto</span></div></section>
+      <section className="admin-card crm-summary"><div className="card-title"><div><h2>Intereses generales</h2><p>Señales agregadas, sin perfiles individuales.</p></div></div><div><span><b>{insights.catalog}</b> accesos al catálogo</span><span><b>{insights.contact}</b> intenciones de contacto</span><span><b>{insights.purchaseIntent}</b> intenciones de compra en Cielito</span></div></section>
     </div>}
     <section className="admin-card crm-future"><div className="card-title"><div><h2>Preparación futura</h2><p>Estructura lista para evaluar integraciones cuando exista autorización y una política de privacidad definida.</p></div></div><div><article><span>◉</span><b>WhatsApp Business</b><small>No conectado</small></article><article><span>✦</span><b>Campañas</b><small>No conectado</small></article><article><span>↻</span><b>Clientes recurrentes</b><small>Sin seguimiento individual</small></article></div></section>
     <p className="analytics-note">Sin datos personales · Sin seguimiento individual · Sin comunicaciones automáticas</p>

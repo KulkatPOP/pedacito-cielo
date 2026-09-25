@@ -3,6 +3,7 @@ export const MEASUREMENT_EVENTS = Object.freeze({
   CATALOG_CLICK: 'catalog_click',
   CHATBOT_OPEN: 'chatbot_open',
   CHATBOT_QUESTION: 'chatbot_question',
+  CHATBOT_PURCHASE_INTENT: 'chatbot_purchase_intent',
 });
 
 export const MEASUREMENT_EVENT_SIGNAL = 'pedacito:measurement';
