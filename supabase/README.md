@@ -12,6 +12,8 @@
 
 No expongas una clave `service_role` en el navegador. Verifica en **Database → Policies** que las políticas administrativas terminan en `_admin_restringido` antes de utilizar el CMS.
 
+La carpeta `future/` contiene únicamente documentación de referencia para una posible arquitectura multi-negocio. No es una migración y no debe ejecutarse.
+
 ## Configuración del negocio
 
 Para instalaciones existentes, ejecuta `migrations/001_cms_configuracion.sql` desde **Supabase → SQL Editor**. Es la migración consolidada del CMS: reutiliza las tablas actuales, agrega únicamente campos faltantes, completa las políticas RLS y prepara el bucket `imagenes`. Puede ejecutarse más de una vez sin borrar datos.

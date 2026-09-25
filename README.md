@@ -96,6 +96,7 @@ El formulario de novedades es solo una interfaz preparada: no envía ni almacena
 - [Mantenimiento](docs/maintenance.md)
 - [Despliegue](docs/deployment.md)
 - [Preparación SaaS](docs/saas-readiness.md)
+- [Arquitectura SaaS futura](docs/saas-architecture.md)
 - [Auditoría de Supabase](docs/supabase-audit.md)
 - [Checklist de lanzamiento](docs/launch-checklist.md)
 - [Manual del administrador](docs/admin-manual.md)
