@@ -65,7 +65,14 @@ export default function useSiteData() {
         if (active) setData({
           productos: products.data?.length ? products.data.map(normalize) : localProducts,
           negocio: business,
-          contenido: { ...localContent, ...(config.data?.contenido_pagina || {}) },
+          contenido: {
+            ...localContent,
+            ...(config.data?.contenido_pagina || {}),
+            chatbot: {
+              ...localContent.chatbot,
+              ...(config.data?.contenido_pagina?.chatbot || {}),
+            },
+          },
           promociones: promotions.data || [],
           responses: {
             ...Object.fromEntries(Object.entries(localResponses).map(([key, value]) => [key.trim().toLowerCase(), value])),
