@@ -65,8 +65,11 @@ Un cambio local no debe sobrescribir silenciosamente un valor remoto válido. Pa
 - `content`: contenido público;
 - `chatbotResponses`: respuestas locales;
 - `branding`: nombre, nombre corto, iniciales, logo, portada y colores.
+- `modules`: manifiesto de funcionalidades activables desde `data/modulos.json`.
 
 El monograma usa `sigla`; si se omite, se calcula desde `nombreCorto`. Si se configura un logo, la página pública lo utiliza; de lo contrario conserva el monograma. Los colores mantienen las variables CSS actuales, por lo que cambiar valores no cambia la estructura visual.
+
+Todos los módulos están activos en la configuración original. Un módulo se desactiva únicamente con `false`; ocultarlo no borra datos ni cambia políticas de seguridad.
 
 ## Archivos que normalmente se modifican
 

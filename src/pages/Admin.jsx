@@ -1,14 +1,16 @@
 import {useEffect,useState} from 'react';import {Link} from 'react-router-dom';import {useAuth} from '../context/AuthContext.jsx';import {supabase,uploadImage} from '../services/supabase.js';import {defaultSettings,getBusinessSettings,saveBusinessSettings} from '../services/businessSettings.js';import IdentitySettings from '../components/IdentitySettings.jsx';import CmsSectionEditor from '../components/CmsSectionEditor.jsx';import AccountSettings from '../components/AccountSettings.jsx';import AnalyticsPanel from '../components/AnalyticsPanel.jsx';import CrmPanel from '../components/CrmPanel.jsx';import NewsSettings from '../components/NewsSettings.jsx';import '../styles/admin.css';import '../styles/identity.css';import '../styles/cms-sections.css';
+import { isModuleEnabled } from '../config/siteConfig.js';
 const productLabels=['Más vendido','Favorito','Recomendado','Nuevo'];
 const empty={nombre:'',descripcion:'',precio:'',categoria_id:'',imagen:'',disponible:true,estado:'disponible',etiqueta:'',destacado:false,orden:0};
 const emptyPromo={titulo:'',descripcion:'',imagen:'',activa:true,fecha_inicio:'',fecha_termino:''};
 const productState=(product)=>product.estado||(product.disponible===false?'agotado':'disponible');
+const moduleTabs={analitica:'analytics',crm:'crm',promociones:'promociones',novedades:'novedades',chatbot:'chatbot'};
 const navGroups=[
  {label:'Inicio',items:[['resumen','Resumen'],['analitica','Analítica'],['crm','CRM']]},
  {label:'Gestión comercial',items:[['productos','Productos'],['promociones','Promociones']]},
  {label:'Contenido',items:[['pagina','Página principal'],['novedades','Novedades'],['nosotros','Nosotros'],['contacto','Contacto'],['identidad','🇻🇪 Identidad del negocio'],['chatbot','Chatbot']]},
  {label:'Configuración',items:[['diseno','Diseño'],['cuenta','Cuenta administrador']]},
-];
+].map(group=>({...group,items:group.items.filter(([tab])=>!moduleTabs[tab]||isModuleEnabled(moduleTabs[tab]))}));
 const nav=navGroups.flatMap(group=>group.items);
 export default function Admin(){const {user,signOut}=useAuth();const [tab,setTab]=useState('resumen'),[products,setProducts]=useState([]),[categories,setCategories]=useState([]),[promos,setPromos]=useState([]),[promoForm,setPromoForm]=useState(emptyPromo),[editingPromo,setEditingPromo]=useState(null),[answers,setAnswers]=useState([]),[config,setConfig]=useState(defaultSettings),[form,setForm]=useState(empty),[editing,setEditing]=useState(null),[busy,setBusy]=useState(false),[loading,setLoading]=useState(true),[notice,setNotice]=useState(''),[noticeType,setNoticeType]=useState('success');
  async function load(){setLoading(true);try{const [p,c,r,a,business]=await Promise.all([supabase.from('productos').select('*,categorias(nombre)').order('created_at',{ascending:false}),supabase.from('categorias').select('*').order('orden'),supabase.from('promociones').select('*').order('fecha',{ascending:false}),supabase.from('respuestas_chatbot').select('*').order('clave'),getBusinessSettings()]);const firstError=[p,c,r,a].find(x=>x.error)?.error;if(firstError)throw firstError;const ordered=(p.data||[]).map(product=>({...product,estado:productState(product)})).sort((a,b)=>{if(a.orden==null&&b.orden==null)return 0;if(a.orden==null)return 1;if(b.orden==null)return-1;return a.orden-b.orden});setProducts(ordered);setCategories(c.data||[]);setPromos(r.data||[]);setConfig({...defaultSettings,...business.data});setAnswers(a.data||[])}catch(error){flash(`No fue posible cargar el panel: ${error.message}`,'error')}finally{setLoading(false)}}

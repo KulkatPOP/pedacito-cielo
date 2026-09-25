@@ -102,4 +102,6 @@ El formulario de novedades es solo una interfaz preparada: no envía ni almacena
 - [Auditoría de producción](docs/production-audit-2026-09-24.md)
 - [Paquete comercial y caso de estudio](docs/commercial/README.md)
 - [Guía de plantilla reutilizable](docs/template-guide.md)
+- [Auditoría de arquitectura de plantilla](docs/template-architecture-audit.md)
+- [Onboarding de nuevos clientes](docs/client-onboarding.md)
 - [Información legal pendiente](docs/legal/legal-information-needed.md)

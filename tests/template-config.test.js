@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 const business = JSON.parse(await readFile(new URL('../data/negocio.json', import.meta.url), 'utf8'));
+const modules = JSON.parse(await readFile(new URL('../data/modulos.json', import.meta.url), 'utf8'));
 
 test('la configuración local contiene los datos mínimos de una plantilla', () => {
   assert.ok(business.nombre);
@@ -21,4 +22,10 @@ test('el branding local define los cuatro colores y campos de imagen', () => {
   }
   assert.equal(typeof business.logo, 'string');
   assert.equal(typeof business.imagen_portada, 'string');
+});
+
+test('los módulos principales están declarados y activos para conservar compatibilidad', () => {
+  for (const moduleName of ['catalogo', 'chatbot', 'analytics', 'promociones', 'crm']) {
+    assert.equal(modules[moduleName], true);
+  }
 });

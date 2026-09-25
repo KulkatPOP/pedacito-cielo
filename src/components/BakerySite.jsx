@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import '../styles/venezuelan-gallery.css';
 import { MEASUREMENT_EVENTS, trackEvent } from '../utils/measurement.js';
-import { brandingConfig, businessConfig } from '../config/siteConfig.js';
+import { brandingConfig, businessConfig, moduleConfig } from '../config/siteConfig.js';
 
 const optimizedImage=(src)=>typeof src==='string'&&src.startsWith('/images/')&&/\.jpe?g(?:[?#].*)?$/i.test(src)?src.replace(/\.jpe?g(?=([?#]|$))/i,'.webp'):src;
 
@@ -35,9 +35,10 @@ export default function BakerySite({productos=[],negocio,contenido={},responses=
  const mapsUrl=`https://maps.google.com/?q=${encodeURIComponent(negocio.direccion)}`;
  const chatActions={productos:[['Ver catálogo','#catalogo',true],['Consultar por WhatsApp',wa(`Hola ${businessName}, quisiera conocer los productos disponibles.`)]],direccion:[['Abrir en Google Maps',mapsUrl],['Consultar por WhatsApp',wa(`Hola ${businessName}, necesito ayuda para llegar al local.`)]],horarios:[['Hacer un pedido',wa(`Hola ${businessName}, quisiera consultar disponibilidad y hacer un pedido.`)]],compra:[['Hacer pedido por WhatsApp',wa(`Hola ${businessName}, quisiera hacer un pedido.`)]],contacto:[['Escribir por WhatsApp',wa(`Hola ${businessName}, quisiera hacer una consulta.`)],['Visitar Instagram',negocio.redes?.instagram]]};
  const activeChatActions=answerKey?(chatActions[answerKey]||[['Continuar por WhatsApp',wa(`Hola ${businessName}, necesito ayuda con mi pedido.`)]]):[];
+ const moduleClasses=Object.entries(moduleConfig).filter(([,enabled])=>enabled===false).map(([name])=>`module-off-${name}`).join(' ');
  const trackPublicAction=(event)=>{const link=event.target.closest('a');if(!link)return;const href=link.getAttribute('href')||'';const location=link.closest('aside')?'chatbot':link.closest('#catalogo')?'catalogo':link.closest('header')?'navegacion':'pagina';const productName=link.dataset.product||'';if(href.startsWith('https://wa.me/'))trackEvent(MEASUREMENT_EVENTS.WHATSAPP_CLICK,{location,...(productName?{productName}:{})});if(href==='#catalogo')trackEvent(MEASUREMENT_EVENTS.CATALOG_CLICK,{location});};
  if(loading)return <div className="site-loading">Preparando productos frescos…</div>;
- return <main style={siteStyle} onClick={trackPublicAction}>
+ return <main className={moduleClasses} style={siteStyle} onClick={trackPublicAction}>
   <div className="topbar"><span className="topbar-text">{topbar.horneado}</span><span aria-hidden="true">•</span><span className="topbar-text">{topbar.retiro}</span><span aria-hidden="true">•</span><span className="topbar-text">{topbar.direccion}</span></div>
   <header className="nav-wrap"><nav className="nav container">
    <a className="brand" href="#inicio">{negocio.logo?<img className="brand-logo" src={optimizedImage(negocio.logo)} alt={`Logo ${businessName}`} decoding="async"/>:<span className="brand-mark">{brandingConfig.initials}</span>}<span><b>{businessName}</b><small>{footerCopy.descriptor}</small></span></a>
@@ -69,7 +70,7 @@ export default function BakerySite({productos=[],negocio,contenido={},responses=
 
   <section className="testimonials section container"><div className="center-head"><span className="kicker">{testimonials.kicker}</span><h2>{testimonials.titulo}</h2></div>{(testimonials.items||[]).length>0?<div className="testimonial-grid">{testimonials.items.map(item=><article key={`${item.nombre}-${item.texto}`}><div className="stars">★★★★★</div><p>“{item.texto}”</p><b>{item.nombre}</b><small>{item.detalle}</small></article>)}</div>:<div className="testimonial-empty"><span>☆</span><h3>{testimonials.vacio_titulo}</h3><p>{testimonials.vacio_texto}</p></div>}</section>
 
-  {negocio.redes?.instagram&&<section className="instagram-invite"><div className="container instagram-invite-grid"><div><span className="kicker light">{instagramCopy.kicker}</span><h2>{instagramCopy.titulo}</h2><p>{instagramCopy.texto}</p><a className="btn cream" href={negocio.redes.instagram} target="_blank" rel="noopener noreferrer">{instagramCopy.boton} ↗</a></div><div className="instagram-preview" aria-hidden="true"><span>PC</span><span>♡</span><span>✦</span></div></div></section>}
+  {negocio.redes?.instagram&&<section className="instagram-invite"><div className="container instagram-invite-grid"><div><span className="kicker light">{instagramCopy.kicker}</span><h2>{instagramCopy.titulo}</h2><p>{instagramCopy.texto}</p><a className="btn cream" href={negocio.redes.instagram} target="_blank" rel="noopener noreferrer">{instagramCopy.boton} ↗</a></div><div className="instagram-preview" aria-hidden="true"><span>{brandingConfig.initials}</span><span>♡</span><span>✦</span></div></div></section>}
 
   <section className="community-signup section"><div className="container community-grid"><div><span className="kicker">{communityCopy.kicker}</span><h2>{communityCopy.titulo}</h2><p>{communityCopy.texto}</p></div><form className="community-form" onSubmit={(event)=>event.preventDefault()}><label>Nombre<input type="text" name="nombre" placeholder="Tu nombre" autoComplete="name"/></label><label>WhatsApp o correo<input type="text" name="contacto" placeholder="Tu WhatsApp o correo" autoComplete="email"/></label><fieldset><legend>¿Qué te interesa conocer?</legend><div>{categories.filter(item=>item!=='Todos').map(item=><label key={item}><input type="checkbox" name="intereses" value={item}/>{item}</label>)}</div></fieldset><button type="button" aria-describedby="community-form-status">{communityCopy.boton}</button><small id="community-form-status">{communityCopy.estado} No almacenamos estos datos actualmente.</small></form></div></section>
 

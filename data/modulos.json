@@ -1,0 +1,11 @@
+{
+  "catalogo": true,
+  "chatbot": true,
+  "analytics": true,
+  "promociones": true,
+  "crm": true,
+  "novedades": true,
+  "comunidad": true,
+  "testimonios": true,
+  "instagram": true
+}
