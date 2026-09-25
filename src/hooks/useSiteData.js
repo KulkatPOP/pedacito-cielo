@@ -5,13 +5,9 @@ import localProducts from '../../data/productos.json';
 import localBusiness from '../../data/negocio.json';
 import localResponses from '../chatbot/responses.json';
 import localContent from '../../data/contenido.json';
+import { mergeSources, prepareProducts } from '../utils/dataPriority.js';
 
 const fallback = { productos: localProducts, negocio: localBusiness, contenido: localContent, responses: localResponses, promociones: [] };
-const currentSchedule = localBusiness.horarios;
-const normalizeSchedule = (value, fallbackValue) => {
-  if (!value || /(?:20:00|09:00\s*[—-]\s*20:00)/.test(value) || /(?:Domingo\s*·?\s*09:00\s*[—-]\s*15:00)/i.test(value)) return fallbackValue;
-  return value;
-};
 const normalize = (product) => {
   const isArepa = product.nombre?.toLowerCase().includes('arepa');
   return {
@@ -49,27 +45,22 @@ export default function useSiteData() {
 
         const hasError = [products, promotions, answers].some((result) => result.error);
         if (hasError) throw new Error('La información remota no está disponible.');
-        const business = config.data ? {
-          ...localBusiness, ...config.data,
-          whatsapp: localBusiness.whatsapp,
+        const business = config.data ? mergeSources({ remote: {
+          ...config.data,
+          whatsapp: config.data.whatsapp || localBusiness.whatsapp,
           horarios: {
-            semana: normalizeSchedule(config.data.horario_semana, currentSchedule.semana),
-            domingo: normalizeSchedule(config.data.horario_domingo, currentSchedule.domingo),
+            semana: config.data.horario_semana || localBusiness.horarios.semana,
+            domingo: config.data.horario_domingo || localBusiness.horarios.domingo,
           },
           redes: {
-            instagram: localBusiness.redes.instagram,
-            facebook: localBusiness.redes.facebook,
+            instagram: config.data.instagram ?? localBusiness.redes.instagram,
+            facebook: config.data.facebook ?? localBusiness.redes.facebook,
             tiktok: config.data.tiktok || '',
           },
-        } : localBusiness;
+        }, fallback: localBusiness }) : localBusiness;
 
-        const normalizedProducts = products.data?.length
-          ? products.data.map(normalize).filter((product) => product.estado !== 'oculto').sort((a, b) => {
-              if (a.orden == null && b.orden == null) return 0;
-              if (a.orden == null) return 1;
-              if (b.orden == null) return -1;
-              return a.orden - b.orden;
-            })
+        const normalizedProducts = Array.isArray(products.data)
+          ? prepareProducts(products.data, normalize)
           : localProducts;
         const today = new Date().toISOString().slice(0, 10);
         const activePromotions = (promotions.data || []).filter((promotion) =>
@@ -79,21 +70,13 @@ export default function useSiteData() {
         if (active) setData({
           productos: normalizedProducts,
           negocio: business,
-          contenido: {
-            ...localContent,
-            ...(config.data?.contenido_pagina || {}),
-            chatbot: {
-              ...localContent.chatbot,
-              ...(config.data?.contenido_pagina?.chatbot || {}),
-            },
-          },
+          contenido: mergeSources({ remote: config.data?.contenido_pagina, fallback: localContent }),
           promociones: activePromotions,
           responses: {
             ...Object.fromEntries(Object.entries(localResponses).map(([key, value]) => [key.trim().toLowerCase(), value])),
             ...Object.fromEntries((answers.data || []).map((item) => {
               const key = item.clave.trim().toLowerCase();
-              const value = key === 'horarios' && /(?:20:00|15:00)/.test(item.respuesta) ? localResponses.horarios : item.respuesta;
-              return [key, value];
+              return [key, item.respuesta];
             })),
           },
           loading: false, source: 'supabase',

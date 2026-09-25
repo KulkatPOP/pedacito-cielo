@@ -33,6 +33,8 @@ Página pública
 
 Si Supabase no está configurado, falla o supera el timeout de 7 segundos, la página pública utiliza `data/*.json` y `src/chatbot/responses.json`.
 
+La precedencia por campo es Supabase → fallback local → valor predeterminado. Una colección remota vacía es válida y no debe repoblarse automáticamente con datos locales.
+
 ## Autenticación y autorización
 
 - `/admin` está envuelto por `ProtectedRoute`.
@@ -40,7 +42,7 @@ Si Supabase no está configurado, falla o supera el timeout de 7 segundos, la p�
 - El login usa `signInWithPassword`.
 - El cierre usa `signOut` y limpia el usuario local.
 - La autorización de datos depende de políticas RLS de Supabase.
-- **Roles empresariales:** [POR DEFINIR]. El código solo distingue sesión anónima y usuario autenticado.
+- **Autorización administrativa:** la migración `002_restringir_administradores_rls.sql` mantiene una allowlist por UUID en `public.administradores`. Debe comprobarse en cada entorno que esta migración fue aplicada.
 
 ## Servicios externos
 
@@ -60,7 +62,7 @@ Si Supabase no está configurado, falla o supera el timeout de 7 segundos, la p�
 
 ## Riesgos arquitectónicos
 
-- Las políticas administrativas confían en cualquier identidad `authenticated`; debe confirmarse si Supabase permite altas no controladas.
+- `schema.sql` contiene políticas amplias de instalación y depende de que la migración `002_restringir_administradores_rls.sql` se ejecute inmediatamente después.
 - El panel concentra muchas operaciones en `Admin.jsx`, lo que aumenta el costo de mantenimiento futuro.
 - No existen pruebas automatizadas para rutas, CMS o fallback.
-
+- Permanecen componentes y páginas iniciales sin uso (`Navbar`, `Hero`, `ProductCard`, `Catalog`, `Chatbot`, `Contact`, `Footer`, `Catalogo` y `Nosotros`). No se eliminan hasta confirmar que ninguna integración externa depende de ellos.

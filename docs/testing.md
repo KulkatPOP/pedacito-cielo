@@ -32,9 +32,20 @@ Fecha: 2026-08-31
 - **Resultado en esta auditoría:** NO VERIFICADO mediante navegador por la misma limitación de conexión.
 - **Estado previo conocido:** [POR VERIFICAR nuevamente en navegador].
 
+## Pruebas automatizadas actuales
+
+`npm test` utiliza el runner integrado de Node y verifica:
+
+- prioridad Supabase → fallback → defaults;
+- combinación segura de contenido anidado;
+- compatibilidad de estados de productos;
+- exclusión de productos ocultos;
+- orden comercial;
+- validez de un catálogo remoto vacío.
+
 ## Cobertura faltante
 
-- No existen tests unitarios, integración o E2E versionados.
+- No existen pruebas de componentes, integración con Supabase o E2E versionadas.
 - No hay scripts de lint o typecheck.
 - No hay pruebas de carga.
 - No se verificó un despliegue de producción.
@@ -48,3 +59,13 @@ Fecha: 2026-08-31
 4. Responsive: 390×844, tablet y escritorio.
 5. Accesibilidad: navegación por teclado, nombres accesibles y contraste.
 6. Storage: tipo, tamaño y permisos de archivos.
+
+## Verificación de producción local — 2026-09-24
+
+- Navegador: público, catálogo, imágenes visibles, WhatsApp, chatbot, redes y novedades verificados.
+- Protección: `/admin` sin sesión redirigió a `/admin/login`.
+- Responsive: 390×844, 768×1024 y 1440×900 sin desbordamiento horizontal de página; catálogo 1/2/4 columnas.
+- Consola: sin errores. Se registraron advertencias de timeout de Supabase y activación del fallback local.
+- Administración autenticada: pendiente por no utilizar ni solicitar credenciales del cliente.
+
+Consulta el detalle y los riesgos en `production-audit-2026-09-24.md`.

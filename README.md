@@ -1,34 +1,104 @@
 # Pedacito de Cielo
 
-Proyecto React + Vite listo para Visual Studio Code.
+Sitio público y panel CMS para Pedacito de Cielo, desarrollado con React, Vite y Supabase. Incluye catálogo, productos destacados, promociones, configuración editable, chatbot Cielito, analítica local y herramientas comerciales administrativas.
 
-## Ejecutar localmente
+## Requisitos
 
-1. Abre esta carpeta en Visual Studio Code.
-2. Abre **Terminal > Nuevo terminal**.
-3. Ejecuta `npm install`.
-4. Ejecuta `npm run dev`.
-5. Abre la dirección local indicada por Vite.
+- Node.js 20 o superior.
+- npm.
+- Un proyecto Supabase para autenticación, base de datos y almacenamiento administrativo.
 
-## Editar contenido
+## Instalación local
 
-- Productos, precios, imágenes y disponibilidad: `data/productos.json`.
-- Dirección, horarios, WhatsApp y redes: `data/negocio.json`.
-- Respuestas del chatbot: `src/chatbot/responses.json`.
-- Estilos generales: `src/styles/global.css`.
+```bash
+npm install
+```
 
-Antes de usarlo con clientes, reemplaza el WhatsApp provisional y los enlaces `#` de las redes sociales en `data/negocio.json`.
+Copia `.env.example` como `.env` y completa solamente las credenciales públicas:
 
-## Panel administrador y Supabase
+```env
+VITE_SUPABASE_URL=https://TU-PROYECTO.supabase.co
+VITE_SUPABASE_ANON_KEY=TU_CLAVE_ANON_PUBLICA
+```
 
-El sitio ahora incluye un CMS en `/admin/login`. Sigue `supabase/README.md` para crear las tablas, Storage y el primer usuario administrador. Mientras Supabase no esté configurado, la web pública continúa funcionando con los JSON locales como respaldo.
+Nunca agregues una clave `service_role` al frontend ni a un archivo utilizado por Vite.
 
-## Documentación técnica
+## Comandos
 
-- Arquitectura: `docs/architecture.md`
-- Tecnologías: `docs/technology.md`
-- Seguridad: `docs/security.md`
-- Pruebas: `docs/testing.md`
-- Trazabilidad: `docs/traceability.md`
-- Decisiones: `docs/decisions.md`
-- Información legal pendiente: `docs/legal/legal-information-needed.md`
+```bash
+npm run dev       # servidor de desarrollo
+npm run build     # compilación de producción
+npm run preview   # revisión local del build
+npm test          # pruebas básicas de prioridad y catálogo
+```
+
+Rutas principales:
+
+- Sitio público: `/`
+- Login administrativo: `/admin/login`
+- Panel protegido: `/admin`
+
+## Fuentes de datos
+
+La página pública intenta leer Supabase y utiliza archivos locales cuando la conexión no está disponible:
+
+- `data/productos.json`: catálogo de respaldo.
+- `data/negocio.json`: datos comerciales de respaldo.
+- `data/contenido.json`: textos y secciones públicas de respaldo.
+- `src/chatbot/responses.json`: respuestas de respaldo de Cielito.
+
+Cuando Supabase responde correctamente, sus datos tienen prioridad. Los valores locales deben mantenerse coherentes porque son el mecanismo de recuperación ante fallos.
+
+## Estructura principal
+
+```text
+src/
+  components/   interfaz pública, CMS y paneles administrativos
+  context/      sesión y autenticación
+  hooks/        carga y normalización de datos
+  pages/        rutas principales
+  services/     Supabase y configuración del negocio
+  styles/       estilos públicos y administrativos
+  utils/        medición anónima local
+data/           contenido local de respaldo
+public/         imágenes y recursos estáticos
+supabase/       esquema, semillas y migraciones SQL
+docs/           documentación técnica y decisiones
+```
+
+## Supabase y seguridad
+
+Sigue [supabase/README.md](supabase/README.md) en el orden indicado. La migración `002_restringir_administradores_rls.sql` es obligatoria: reemplaza las políticas administrativas amplias del esquema inicial por una allowlist de usuarios autorizados.
+
+El frontend utiliza únicamente la clave anónima pública. La autorización real depende de Supabase Auth y RLS.
+
+## Analítica y privacidad
+
+La medición actual utiliza `localStorage` del navegador y conserva únicamente eventos agregables como clics de WhatsApp, aperturas del chatbot y accesos al catálogo. No registra nombres, teléfonos, correos, cuentas ni identificadores personales. No representa analítica global ni reemplaza una plataforma de medición centralizada.
+
+El formulario de novedades es solo una interfaz preparada: no envía ni almacena los datos ingresados.
+
+## Mantenimiento
+
+- Ejecuta `npm run build` después de cada cambio.
+- No edites simultáneamente los respaldos JSON y el CMS sin comprobar cuál será la fuente efectiva.
+- Conserva los JPEG originales mientras existan referencias históricas; la web pública utiliza variantes WebP cuando están disponibles.
+- No borres migraciones que puedan haber sido aplicadas en instalaciones existentes.
+
+## Documentación adicional
+
+- [Arquitectura](docs/architecture.md)
+- [Tecnologías](docs/technology.md)
+- [Seguridad](docs/security.md)
+- [Pruebas](docs/testing.md)
+- [Trazabilidad](docs/traceability.md)
+- [Decisiones](docs/decisions.md)
+- [Mantenimiento](docs/maintenance.md)
+- [Despliegue](docs/deployment.md)
+- [Preparación SaaS](docs/saas-readiness.md)
+- [Auditoría de Supabase](docs/supabase-audit.md)
+- [Checklist de lanzamiento](docs/launch-checklist.md)
+- [Manual del administrador](docs/admin-manual.md)
+- [Auditoría de producción](docs/production-audit-2026-09-24.md)
+- [Paquete comercial y caso de estudio](docs/commercial/README.md)
+- [Información legal pendiente](docs/legal/legal-information-needed.md)

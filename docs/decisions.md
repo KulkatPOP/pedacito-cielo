@@ -11,8 +11,13 @@
 
 ## DEC-002 — Autorización mediante RLS
 
-- **Decisión implementada:** lectura pública y escritura para `authenticated`.
+- **Decisión implementada:** lectura pública y escritura limitada por la allowlist `public.administradores` mediante `public.es_administrador()` después de aplicar la migración 002.
 - **Motivo original:** no documentado.
-- **Impacto:** simple para un único administrador, pero requiere endurecimiento si existen más usuarios o registro público.
-- **Estado:** requiere confirmar el modelo de cuentas.
+- **Impacto:** protege el modelo actual de un único negocio; requiere rediseño para membresías multi-tenant.
+- **Estado:** implementado en migración y pendiente de verificación en el proyecto remoto.
 
+## DEC-003 — Precedencia explícita de datos
+
+- **Decisión implementada:** Supabase tiene prioridad; JSON local actúa como recuperación; los defaults completan únicamente ausencias.
+- **Impacto:** una respuesta remota vacía se respeta y los datos locales no corrigen silenciosamente valores comerciales remotos.
+- **Validación:** cubierta por pruebas unitarias en `tests/data-priority.test.js`.

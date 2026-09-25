@@ -1,5 +1,6 @@
 import { requireSupabase, supabase } from './supabase.js';
 import localContent from '../../data/contenido.json';
+import { mergeSources } from '../utils/dataPriority.js';
 
 export const defaultSettings = {
   id: 1,
@@ -30,12 +31,11 @@ export async function getBusinessSettings() {
   const legacyHero = result.data?.hero_titulo === 'Hay momentos que saben a';
   return {
     data: result.data ? {
-      ...defaultSettings,
       ...result.data,
       hero_titulo: legacyHero ? defaultSettings.hero_titulo : result.data.hero_titulo || defaultSettings.hero_titulo,
       hero_destacado: legacyHero ? defaultSettings.hero_destacado : result.data.hero_destacado || defaultSettings.hero_destacado,
       imagen_portada: result.data.imagen_portada || result.data.hero_imagen || defaultSettings.imagen_portada,
-      contenido_pagina: { ...localContent, ...(result.data.contenido_pagina || {}) },
+      contenido_pagina: mergeSources({ remote: result.data.contenido_pagina, fallback: localContent }),
     } : null,
     source: 'configuracion',
     error: null,
