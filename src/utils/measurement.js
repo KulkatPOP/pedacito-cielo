@@ -10,7 +10,7 @@ export const MEASUREMENT_EVENT_SIGNAL = 'pedacito:measurement';
 const STORAGE_KEY = 'pedacito:analytics:v1';
 const MAX_EVENTS = 1000;
 const allowedEvents = new Set(Object.values(MEASUREMENT_EVENTS));
-const allowedDetails = new Set(['location', 'productId', 'productName', 'questionKey', 'questionLabel']);
+const allowedDetails = new Set(['location', 'productId', 'productName', 'category', 'questionKey']);
 
 function cleanDetails(details) {
   return Object.fromEntries(Object.entries(details)
